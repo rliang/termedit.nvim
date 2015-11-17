@@ -1,8 +1,8 @@
 # termedit.nvim
-Sets the Neovim host instance as $EDITOR. 
+Sets the Neovim host instance as `$EDITOR`. 
 
 ## Summary
-This plugin sets '$EDITOR' to a python script that has the host Neovim instance
+This plugin sets `$EDITOR` to a python script that has the host Neovim instance
 open its given arguments. It's useful mostly for `:term`.
 
 The script blocks until all given files are closed. Then, the active buffer at
