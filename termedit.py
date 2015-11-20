@@ -4,7 +4,7 @@ import os
 import sys
 import neovim
 
-files = {os.path.abspath(arg) for arg in sys.argv[1:]}
+files = [os.path.abspath(arg) for arg in sys.argv[1:]]
 if not files:
     sys.exit(1)
 
@@ -16,6 +16,7 @@ nvim = neovim.attach('socket', path=addr)
 tbuf = nvim.current.buffer
 
 for fname in files:
+    fname = nvim.eval('fnameescape("{}")'.format(fname)).decode('utf-8')
     nvim.command('drop {}'.format(fname))
     nvim.command('autocmd BufUnload <buffer> silent! call rpcnotify({}, "m")'
             .format(nvim.channel_id))
