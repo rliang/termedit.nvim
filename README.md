@@ -13,7 +13,7 @@ The script then blocks until all files opened by the script are closed, or
   script exit without waiting for the buffer to be unloaded.
 
 ## Requirements
-`python3-neovim`
+`python-neovim` or `python3-neovim`
 
 ## Credits
 The python script is based on [this script by
