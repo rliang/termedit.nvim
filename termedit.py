@@ -13,20 +13,24 @@ if not addr:
     os.execvp('nvim', files)
 
 nvim = neovim.attach('socket', path=addr)
-tbuf = nvim.current.buffer
+cid, cbuf = (nvim.channel_id, nvim.current.buffer)
 
-for fname in files:
-    fname = nvim.eval('fnameescape("{}")'.format(fname)).decode('utf-8')
-    nvim.command('drop {}'.format(fname))
-    nvim.command('autocmd BufUnload <buffer> silent! call rpcnotify({}, "m")'
-            .format(nvim.channel_id))
+files = [nvim.eval('fnameescape("{}")'.format(f)) for f in files]
+for f in files:
+    nvim.command('drop {}'.format(f))
+    nvim.command('au BufUnload <buffer> sil! call rpcnotify({}, "unload", "{}")'.format(cid, f))
+    nvim.current.buffer.vars['termedit'] = cid
 
 while files:
-    try:
-        nvim.session.next_message()
-    except:
-        pass
-    files.pop()
+    msg = nvim.next_message()
+    if not msg:
+        break
+    ev, key, args = msg
+    if ev is not 'notification':
+        break
+    if key == 'release':
+        break
+    if key == 'unload':
+        files = [f for f in files if f not in args]
 
-nvim.current.buffer = tbuf
-nvim.input('i')
+nvim.current.buffer = cbuf
